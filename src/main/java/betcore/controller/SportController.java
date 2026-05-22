@@ -1,6 +1,8 @@
 package betcore.controller;
 
+import betcore.entity.SportEntity;
 import betcore.model.Sport;
+import betcore.repository.SportRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,24 +16,25 @@ public class SportController {
             new Sport(3L, "Tennis", "TENNIS"),
             new Sport(4L, "Ice Hockey", "ICE_HOCKEY")
     );
+    private final SportRepository sportRepository;
+
+    public SportController(SportRepository sportRepository) {
+        this.sportRepository = sportRepository;
+    }
 
     @GetMapping
-    public List<Sport> getSports() {
-        return sports;
+    public List<SportEntity> getSports() {
+        return sportRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public Sport getSport(@PathVariable Long id) {
-        return sports.stream()
-                .filter(s -> s.id().equals(id))
-                .findFirst()
+    public SportEntity getSport(@PathVariable Long id) {
+        return sportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sport with id " + id + " not found"));
     }
 
     @GetMapping("/search")
     public List<Sport> getSportsByName(@RequestParam String name) {
-        return sports.stream()
-                .filter(s -> s.name().toLowerCase().contains(name.toLowerCase()))
-                .toList();
+        return sportRepository.findNameByNameContainingIgnoreCase(name.toLowerCase());
     }
 }
