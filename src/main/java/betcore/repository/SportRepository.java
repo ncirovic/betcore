@@ -1,7 +1,6 @@
 package betcore.repository;
 
 import betcore.entity.SportEntity;
-import betcore.model.Sport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +14,5 @@ public interface SportRepository extends JpaRepository<SportEntity, Long> {
 
     boolean existsByCode(String code);
 
-    List<Sport> findNameByNameContainingIgnoreCase(String name);
+    List<SportEntity> findNameByNameContainingIgnoreCase(String name);
 }

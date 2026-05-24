@@ -1,7 +1,6 @@
 package betcore.controller;
 
 import betcore.entity.SportEntity;
-import betcore.model.Sport;
 import betcore.repository.SportRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,12 +9,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/sports")
 public class SportController {
-    private final List<Sport> sports = List.of(
-            new Sport(1L, "Football", "FOOTBALL"),
-            new Sport(2L, "Basketball", "BASKETBALL"),
-            new Sport(3L, "Tennis", "TENNIS"),
-            new Sport(4L, "Ice Hockey", "ICE_HOCKEY")
-    );
     private final SportRepository sportRepository;
 
     public SportController(SportRepository sportRepository) {
@@ -34,7 +27,7 @@ public class SportController {
     }
 
     @GetMapping("/search")
-    public List<Sport> getSportsByName(@RequestParam String name) {
+    public List<SportEntity> getSportsByName(@RequestParam String name) {
         return sportRepository.findNameByNameContainingIgnoreCase(name.toLowerCase());
     }
 }
