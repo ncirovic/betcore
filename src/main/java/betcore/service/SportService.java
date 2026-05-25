@@ -19,8 +19,9 @@ public class SportService {
         return sportRepository.findAll();
     }
 
-    public SportEntity findById(Long id) {
-        return sportRepository.findById(id).orElseThrow(() -> new RuntimeException("Sport not found: " + id));
+    public SportEntity findById(Long sportId) {
+        return sportRepository.findById(sportId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sport not found: " + sportId));
     }
 
     public SportEntity create(SportEntity sportEntity) {
