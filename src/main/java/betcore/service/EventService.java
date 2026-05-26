@@ -16,7 +16,7 @@ public class EventService {
     private final EventRepository eventRepository;
     private final SportService sportService;
 
-    public List<EventEntity> findAll(Long sportId) {
+    public List<EventEntity> findAll() {
         return eventRepository.findAll();
     }
 
