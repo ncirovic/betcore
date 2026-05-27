@@ -5,6 +5,7 @@ import betcore.dto.SportResponse;
 import betcore.entity.SportEntity;
 import betcore.repository.SportRepository;
 import betcore.service.SportService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,12 +39,12 @@ public class SportController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SportResponse create(@RequestBody SportRequest request) {
+    public SportResponse create(@Valid @RequestBody SportRequest request) {
         return sportService.create(request);
     }
 
     @PutMapping("/{id}")
-    public SportResponse update(@PathVariable Long id, @RequestBody SportRequest request) {
+    public SportResponse update(@PathVariable Long id, @Valid @RequestBody SportRequest request) {
         return sportService.update(id, request);
     }
 

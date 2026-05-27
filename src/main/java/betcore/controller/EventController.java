@@ -3,6 +3,7 @@ package betcore.controller;
 import betcore.dto.EventRequest;
 import betcore.dto.EventResponse;
 import betcore.service.EventService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class EventController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EventResponse create(@RequestParam Long sportId, @RequestBody EventRequest request) {
+    public EventResponse create(@RequestParam Long sportId, @Valid @RequestBody EventRequest request) {
         return eventService.create(sportId, request);
     }
 }
