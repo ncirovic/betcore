@@ -1,5 +1,7 @@
 package betcore.service;
 
+import betcore.dto.EventRequest;
+import betcore.dto.EventResponse;
 import betcore.entity.EventEntity;
 import betcore.entity.SportEntity;
 import betcore.exception.ResourceNotFoundException;
@@ -16,8 +18,10 @@ public class EventService {
     private final EventRepository eventRepository;
     private final SportService sportService;
 
-    public List<EventEntity> findAll() {
-        return eventRepository.findAll();
+    public List<EventResponse> findAll() {
+        return eventRepository.findAll().stream()
+                .map(EventResponse::form)
+                .toList();
     }
 
     public EventEntity findById(Long eventId) {
@@ -25,13 +29,24 @@ public class EventService {
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found: " + eventId));
     }
 
-    public List<EventEntity> findBySportId(Long sportId) {
-        return eventRepository.findBySportId(sportId);
+    public EventResponse findResponseById(Long eventId) {
+        return EventResponse.form(findById(eventId));
     }
 
-    public EventEntity create(Long sportId, EventEntity event) {
-        SportEntity sport = sportService.findById(sportId);
-        event.setSport(sport);
-        return eventRepository.save(event);
+    public List<EventResponse> findBySportId(Long sportId) {
+        return eventRepository.findBySportId(sportId).stream()
+                .map(EventResponse::form)
+                .toList();
+    }
+
+    public EventResponse create(Long sportId, EventRequest request) {
+        SportEntity sportEntity = sportService.findById(sportId);
+        EventEntity eventEntity = new EventEntity();
+
+        eventEntity.setName(request.getName());
+        eventEntity.setStartTime(request.getStartTime());
+        eventEntity.setSport(sportEntity);
+
+        return EventResponse.form(eventRepository.save(eventEntity));
     }
 }

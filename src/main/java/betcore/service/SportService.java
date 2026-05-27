@@ -1,10 +1,11 @@
 package betcore.service;
 
+import betcore.dto.SportRequest;
+import betcore.dto.SportResponse;
 import betcore.entity.SportEntity;
 import betcore.exception.ResourceNotFoundException;
 import betcore.repository.SportRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +16,10 @@ public class SportService {
 
     private final SportRepository sportRepository;
 
-    public List<SportEntity> findAll() {
-        return sportRepository.findAll();
+    public List<SportResponse> findAll() {
+        return sportRepository.findAll().stream()
+                .map(SportResponse::form)
+                .toList();
     }
 
     public SportEntity findById(Long sportId) {
@@ -24,16 +27,23 @@ public class SportService {
                 .orElseThrow(() -> new ResourceNotFoundException("Sport not found: " + sportId));
     }
 
-    public SportEntity create(SportEntity sportEntity) {
-        return sportRepository.save(sportEntity);
+    public SportResponse findResponseById(Long id) {
+        return SportResponse.form(findById(id));
     }
 
-    public SportEntity update(Long id, SportEntity updates) {
-        SportEntity sport = findById(id);
-        sport.setName(updates.getName());
-        sport.setCode(updates.getCode());
+    public SportResponse create(SportRequest request) {
+        SportEntity sportEntity = new SportEntity();
+        sportEntity.setName(request.getName());
+        sportEntity.setCode(request.getCode());
 
-        return sportRepository.save(sport);
+        return SportResponse.form(sportRepository.save(sportEntity));
+    }
+
+    public SportResponse update(Long id, SportRequest request) {
+        SportEntity sportEntity = findById(id);
+        sportEntity.setName(request.getName());
+        sportEntity.setCode(request.getCode());
+        return SportResponse.form(sportRepository.save(sportEntity));
     }
 
     public void delete(Long id) {

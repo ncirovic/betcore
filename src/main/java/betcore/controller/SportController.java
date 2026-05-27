@@ -1,5 +1,7 @@
 package betcore.controller;
 
+import betcore.dto.SportRequest;
+import betcore.dto.SportResponse;
 import betcore.entity.SportEntity;
 import betcore.repository.SportRepository;
 import betcore.service.SportService;
@@ -20,13 +22,13 @@ public class SportController {
     }
 
     @GetMapping
-    public List<SportEntity> getSports() {
+    public List<SportResponse> getAll() {
         return sportService.findAll();
     }
 
     @GetMapping("/{id}")
-    public SportEntity getSport(@PathVariable Long id) {
-        return sportService.findById(id);
+    public SportResponse getSport(@PathVariable Long id) {
+        return sportService.findResponseById(id);
     }
 
     @GetMapping("/search")
@@ -36,13 +38,13 @@ public class SportController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SportEntity create(@RequestBody SportEntity sportEntity) {
-        return sportService.create(sportEntity);
+    public SportResponse create(@RequestBody SportRequest request) {
+        return sportService.create(request);
     }
 
     @PutMapping("/{id}")
-    public SportEntity update(@PathVariable Long id, @RequestBody SportEntity sportEntity) {
-        return sportService.update(id, sportEntity);
+    public SportResponse update(@PathVariable Long id, @RequestBody SportRequest request) {
+        return sportService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
