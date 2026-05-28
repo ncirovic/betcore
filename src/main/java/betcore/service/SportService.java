@@ -3,6 +3,7 @@ package betcore.service;
 import betcore.dto.SportRequest;
 import betcore.dto.SportResponse;
 import betcore.entity.SportEntity;
+import betcore.exception.DuplicateResourceException;
 import betcore.exception.ResourceNotFoundException;
 import betcore.repository.SportRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,10 @@ public class SportService {
     }
 
     public SportResponse create(SportRequest request) {
+        if (sportRepository.existsByCode(request.getCode())) {
+            throw new DuplicateResourceException("Sport code already exists: " + request.getCode());
+        }
+
         SportEntity sportEntity = new SportEntity();
         sportEntity.setName(request.getName());
         sportEntity.setCode(request.getCode());
@@ -50,7 +55,6 @@ public class SportService {
         if (!sportRepository.existsById(id)) {
             throw new ResourceNotFoundException("Sport not found: " + id);
         }
-
         sportRepository.deleteById(id);
     }
 }
