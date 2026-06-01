@@ -2,7 +2,7 @@
 
 A production-shaped **REST API for a sports betting platform**, built with Java 21 and Spring Boot 3.
 
-Covers the full lifecycle of a bet — from browsing sports and events, through placing a wager, to settlement and wallet payout — secured with JWT authentication.
+Covers the full lifecycle of a bet - from browsing sports and events, through placing a wager, to settlement and wallet payout - secured with JWT authentication.
 
 ---
 
@@ -22,13 +22,13 @@ Covers the full lifecycle of a bet — from browsing sports and events, through 
 
 ## Features
 
-- **Sports & Events** — CRUD for sports, events, markets, and selections with odds
-- **Authentication** — JWT-based registration and login; role-based access control
-- **Wallet System** — player balances with deposit, withdrawal, and bet deductions
-- **Bet Placement & Settlement** — place bets on selections; settle events and calculate payouts
-- **Leaderboard** — ranked player standings by winnings
-- **Event-Driven Architecture** — internal Spring events decouple bet placement, wallet updates, and notifications (foundation for Kafka/RabbitMQ)
-- **Validation & Error Handling** — Bean Validation with a global exception handler returning RFC 7807 `ProblemDetail` responses
+- **Sports & Events** - CRUD for sports, events, markets, and selections with odds
+- **Authentication** - JWT-based registration and login; role-based access control
+- **Wallet System** - player balances with deposit, withdrawal, and bet deductions
+- **Bet Placement & Settlement** - place bets on selections; settle events and calculate payouts
+- **Leaderboard** - ranked player standings by winnings
+- **Event-Driven Architecture** - internal Spring events decouple bet placement, wallet updates, and notifications (foundation for Kafka/RabbitMQ)
+- **Validation & Error Handling** - Bean Validation with a global exception handler returning RFC 7807 `ProblemDetail` responses
 
 ---
 
