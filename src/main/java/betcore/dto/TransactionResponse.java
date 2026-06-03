@@ -3,7 +3,6 @@ package betcore.dto;
 import betcore.entity.TransactionEntity;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.cglib.core.Local;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,7 +19,7 @@ public class TransactionResponse {
     private String description;
     private LocalDateTime createdAt;
 
-    public static TransactionResponse from(TransactionEntity entity) {
+    public static TransactionResponse form(TransactionEntity entity) {
         return TransactionResponse.builder()
                 .id(entity.getId())
                 .type(entity.getType().name())
@@ -31,6 +30,5 @@ public class TransactionResponse {
                 .description(entity.getDescription())
                 .createdAt(entity.getCreatedAt())
                 .build();
-
     }
 }
