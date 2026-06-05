@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +71,35 @@ public class WalletService {
         return TransactionResponse.form(transactionEntity);
     }
 
+    @Transactional
+    public TransactionEntity recordBet(PlayerEntity player, BigDecimal amount, String description) {
+        if (player.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientBalanceException("Insufficient balance for bet, Current: " + player.getBalance());
+        }
+
+        BigDecimal before = player.getBalance();
+        player.setBalance(before.subtract(amount));
+        playerRepository.save(player);
+
+        return createTransaction(player, TransactionEntity.TransactionType.BET, amount, before, player.getBalance(), description);
+    }
+
+    @Transactional
+    public TransactionEntity recordWin(PlayerEntity player, BigDecimal amount, String description) {
+        BigDecimal before = player.getBalance();
+        player.setBalance(before.add(amount));
+        playerRepository.save(player);
+
+        return createTransaction(player, TransactionEntity.TransactionType.WIN, amount, before,
+                player.getBalance(), description);
+    }
+
+    public List<TransactionResponse> getPlayerTransactions(Long playerId) {
+        return transactionRepository.findByPlayerIdOrderByCreatedAtDesc(playerId).stream()
+                .map(TransactionResponse::form)
+                .toList();
+    }
+
     private TransactionEntity createTransaction(
             PlayerEntity player,
             TransactionEntity.TransactionType type,
@@ -82,6 +112,7 @@ public class WalletService {
         transactionEntity.setPlayer(player);
         transactionEntity.setAmount(amount);
         transactionEntity.setType(type);
+        transactionEntity.setStatus(TransactionEntity.TransactionStatus.APPROVED);
         transactionEntity.setBalanceBefore(before);
         transactionEntity.setBalanceAfter(after);
         transactionEntity.setDescription(description);

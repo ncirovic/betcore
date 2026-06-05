@@ -1,11 +1,9 @@
 package betcore.config;
 
-import betcore.entity.EventEntity;
-import betcore.entity.MarketEntity;
-import betcore.entity.SelectionEntity;
-import betcore.entity.SportEntity;
+import betcore.entity.*;
 import betcore.repository.EventRepository;
 import betcore.repository.MarketRepository;
+import betcore.repository.PlayerRepository;
 import betcore.repository.SportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +22,7 @@ public class DataSeeder implements CommandLineRunner {
     private final SportRepository sportRepository;
     private final EventRepository eventRepository;
     private final MarketRepository marketRepository;
+    private final PlayerRepository playerRepository;
 
     @Override
     public void run(String ...args) {
@@ -84,6 +83,23 @@ public class DataSeeder implements CommandLineRunner {
         marketRepository.save(matchWinner);
 
         log.info("Seeded {} markets", marketRepository.count());
+
+        // Seed players
+        PlayerEntity player1 = new PlayerEntity();
+        player1.setUsername("nemanja");
+        player1.setEmail("nemanja@betcore.com");
+        player1.setPassword("password123");
+        player1.setBalance(new BigDecimal("1000.00"));
+        playerRepository.save(player1);
+
+        PlayerEntity player2 = new PlayerEntity();
+        player2.setUsername("john_doe");
+        player2.setEmail("john@betcore.com");
+        player2.setPassword("password123");
+        player2.setBalance(new BigDecimal("500.00"));
+        playerRepository.save(player2);
+
+        log.info("Seeded {} players", playerRepository.count());
 
     }
 }
