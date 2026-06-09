@@ -118,5 +118,4 @@ public class WalletService {
         transactionEntity.setDescription(description);
         return transactionRepository.save(transactionEntity);
     }
-    //COMMENT FOR TEST
 }
