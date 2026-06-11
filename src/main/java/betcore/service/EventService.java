@@ -69,36 +69,26 @@ public class EventService {
                     "Event must be FINISHED before settlement. Current status: " + event.getStatus());
         }
 
-        selectionRepository.findById(winningSelectionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Selection not found: " + winningSelectionId));
+        // 1. Process the WINNERS first
+        List<BetEntity> winningBets = betRepository
+                .findBySelectionIdAndStatus(winningSelectionId, BetEntity.BetStatus.PENDING);
 
-        // Find all pending bets for selections in this event's markets
-        List<MarketEntity> markets = marketRepository.findByEventId(eventId);
-        for (MarketEntity market : markets) {
-            for (SelectionEntity selection : market.getSelections()) {
-                List<BetEntity> pendingBets = betRepository
-                        .findBySelectionIdAndStatus(selection.getId(), BetEntity.BetStatus.PENDING);
+        for (BetEntity bet : winningBets) {
+            bet.setStatus(BetEntity.BetStatus.WON);
+            bet.setSettledAt(LocalDateTime.now());
 
-                for (BetEntity bet : pendingBets) {
-                    if (selection.getId().equals(winningSelectionId)) {
-                        // Winner — pay out
-                        bet.setStatus(BetEntity.BetStatus.WON);
-                        walletService.recordWin(bet.getPlayer(), bet.getPotentialWin(),
-                                "Win: " + selection.getName() + " @ " + bet.getOdds());
-                        log.info("Bet WON: betId={}, playerId={}, payout={}",
-                                bet.getId(), bet.getPlayer().getId(), bet.getPotentialWin());
-                    } else {
-                        // Loser
-                        bet.setStatus(BetEntity.BetStatus.LOST);
-                        log.info("Bet LOST: betId={}, playerId={}",
-                                bet.getId(), bet.getPlayer().getId());
-                    }
-                    bet.setSettledAt(LocalDateTime.now());
-                    betRepository.save(bet);
-                }
-            }
+            // Payout logic
+            walletService.recordWin(bet.getPlayer(), bet.getPotentialWin(),
+                    "Win: " + bet.getSelection().getName() + " @ " + bet.getOdds());
+
+            log.info("Bet WON: betId={}, playerId={}, payout={}",
+                    bet.getId(), bet.getPlayer().getId(), bet.getPotentialWin());
         }
+        betRepository.saveAll(winningBets);
+
+        // 2. Bulk update all remaining pending bets for this event to LOST in one query
+        int updatedLosersCount = betRepository.bulkUpdatePendingBetsToLost(eventId, winningSelectionId, LocalDateTime.now());
+        log.info("Bulk updated {} losing bets to LOST for eventId={}", updatedLosersCount, eventId);
 
         return EventResponse.form(event);
     }
