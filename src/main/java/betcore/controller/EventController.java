@@ -2,6 +2,7 @@ package betcore.controller;
 
 import betcore.dto.EventRequest;
 import betcore.dto.EventResponse;
+import betcore.entity.EventEntity;
 import betcore.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,4 +35,18 @@ public class EventController {
     public EventResponse create(@RequestParam Long sportId, @Valid @RequestBody EventRequest request) {
         return eventService.create(sportId, request);
     }
+
+    @PutMapping("/{id}/status")
+    public EventResponse updateStatus(@PathVariable Long id,
+                                      @RequestParam String status) {
+        EventEntity.EventStatus newStatus = EventEntity.EventStatus.valueOf(status.toUpperCase());
+        return eventService.updateStatus(id, newStatus);
+    }
+
+    @PostMapping("/{id}/settle")
+    public EventResponse settle(@PathVariable Long id,
+                                @RequestParam Long winningSelectionId) {
+        return eventService.settleEvent(id, winningSelectionId);
+    }
+
 }
