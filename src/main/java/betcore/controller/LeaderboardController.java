@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,7 +21,6 @@ public class LeaderboardController {
     public List<LeaderboardEntry> getLeaderboard(@RequestParam(defaultValue = "10") int limit) {
 
         List<LeaderboardProjection> raw = betRepository.getLeaderboardRaw(PageRequest.of(0, limit));
-        List<LeaderboardEntry> leaderboard = new ArrayList<>();
 
         return IntStream.range(0, raw.size())
                 .mapToObj( i -> {
