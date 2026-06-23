@@ -69,6 +69,7 @@ public class EventService {
                     "Event must be FINISHED before settlement. Current status: " + event.getStatus());
         }
 
+        log.info("Starting settlement: eventId={}, winningSelectionId={}", eventId, winningSelectionId);
         // 1. Process the WINNERS first
         List<BetEntity> winningBets = betRepository
                 .findBySelectionIdAndStatus(winningSelectionId, BetEntity.BetStatus.PENDING);
@@ -85,6 +86,8 @@ public class EventService {
                     bet.getId(), bet.getPlayer().getId(), bet.getPotentialWin());
         }
         betRepository.saveAll(winningBets);
+        log.info("Settlement complete: eventId={}, betsProcessed={}",
+                eventId, winningBets.size());
 
         // 2. Bulk update all remaining pending bets for this event to LOST in one query
         int updatedLosersCount = betRepository.bulkUpdatePendingBetsToLost(eventId, winningSelectionId, LocalDateTime.now());

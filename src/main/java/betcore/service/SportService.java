@@ -7,10 +7,12 @@ import betcore.exception.DuplicateResourceException;
 import betcore.exception.ResourceNotFoundException;
 import betcore.repository.SportRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SportService {
@@ -41,7 +43,9 @@ public class SportService {
         sportEntity.setName(request.getName());
         sportEntity.setCode(request.getCode());
 
-        return SportResponse.form(sportRepository.save(sportEntity));
+        SportResponse response = SportResponse.form(sportRepository.save(sportEntity));
+        log.info("Sport created: id={}, name={}, code={}", response.getId(), response.getName(), response.getCode());
+        return response;
     }
 
     public SportResponse update(Long id, SportRequest request) {
@@ -56,5 +60,6 @@ public class SportService {
             throw new ResourceNotFoundException("Sport not found: " + id);
         }
         sportRepository.deleteById(id);
+        log.info("Sport deleted: id={}", id);
     }
 }
